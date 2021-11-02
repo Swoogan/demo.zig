@@ -8,6 +8,7 @@ const allocator = std.heap.wasm_allocator;
 // pub extern fn consoleLogF(_: f32) void;
 // pub extern fn log(_: [*]const u8, _: c_uint) void;
 pub extern fn setPixel(x: f32, y: f32) void;
+pub extern fn getRandom() f32;
 pub extern fn hello() void;
 
 const Point = packed struct {
@@ -20,12 +21,25 @@ const origin = Point { .x = 320, .y = 240 };
 const r: f32 = 50;
 var t: f32 = 0;
 var step: f32 = 0.1;
-var prng = std.rand.DefaultPrng.init(0xdeadbeef);
-// var r = std.rand.Rand.init(0xdeadbeef);
-const x_rand: f32 = prng.float(f32);
+var rain = init: {
+    var initial_value: [640]Point = undefined;
+    for (initial_value) |*pt, i| {
+        pt.* = Point{
+            .x = @floatCast(f32, @as(f32, i)),
+            .y = @floatCast(f32, 0),
+        };
+    }
+    break :init initial_value;
+};
 
 export fn render() void {
-    setPixel(x_rand, origin.y);
+    var x_rand = getRandom() * 640;
+    setPixel(x_rand * 640, origin.y);
+
+    for (rain) |*pt, i| {
+        setPixel(pt.x, pt.y);
+    }
+
     const x = origin.x + r * @sin(t);
     const y = origin.y + r * @cos(t);
     setPixel(x, y);

@@ -24,17 +24,15 @@ function clear() {
 
 var importObject = {
     env: {
-        log: function(arg) {
-            console.log(arg);
-        },
+        log: (arg) => console.log(arg),
         setPixel: (x, y) => drawPixel(x, y),
-        hello: function() {
-            console.log("hello");
-        }
+        hello: () => console.log("hello"),
+        getRandom: () => Math.random(),
+
     }
 };
 
-WebAssembly.instantiateStreaming(fetch('add-wasm.wasm'), importObject)
+WebAssembly.instantiateStreaming(fetch('demo.wasm'), importObject)
     .then(assembly => {
         const render = assembly.instance.exports.render;
 
