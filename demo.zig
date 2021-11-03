@@ -18,9 +18,12 @@ const Point = packed struct {
 
 const origin = Point { .x = 320, .y = 240 };
 
+// circle data
 const r: f32 = 50;
 var t: f32 = 0;
 var step: f32 = 0.1;
+
+// rain data
 var rain = init: {
     var initial_value: [640]Point = undefined;
     for (initial_value) |*pt, i| {
@@ -32,21 +35,38 @@ var rain = init: {
     break :init initial_value;
 };
 
+fn swap(x: *i32, y: *i32) void {
+    const temp = x.*;
+    x.* = y.*;
+    y.* = temp;
+}
+
 export fn render() void {
-    var x_rand = getRandom() * 640;
-    setPixel(x_rand * 640, origin.y);
+    var a: i32 = 10;
+    var b: i32 = 20;
+    
+    swap(&a, &b);
 
-    for (rain) |*pt, i| {
-        setPixel(pt.x, pt.y);
+    if (a > 10) {
+        hello();
     }
+    const width = @floatCast(f32, 640);
+    const rnd = getRandom() * width;
+    var x_rand = @floatToInt(usize, rnd);
 
+    var drop = &rain[x_rand];
+    // setPixel(drop.x, drop.y + 10);
+    drop.y += 10;
+
+//    for (rain) |*pt, i| {
+//        setPixel(pt.x, pt.y);
+//    }
+
+    // draw circle
     const x = origin.x + r * @sin(t);
     const y = origin.y + r * @cos(t);
-    setPixel(x, y);
+    // setPixel(x, y);
     if (t >= 10) return;
     t += step;
-    
-    // hello();
-
 }
 

@@ -28,7 +28,6 @@ var importObject = {
         setPixel: (x, y) => drawPixel(x, y),
         hello: () => console.log("hello"),
         getRandom: () => Math.random(),
-
     }
 };
 
