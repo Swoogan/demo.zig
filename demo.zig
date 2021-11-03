@@ -16,7 +16,13 @@ const Point = packed struct {
     y: f32,
 };
 
+//const height: usize = 320;
+const fps: u8 = 60;
+const five_seconds: u8 = 300;
+const width: f32 = 640;
 const origin = Point { .x = 320, .y = 240 };
+
+var time: u32 = 0;
 
 // circle data
 const r: f32 = 50;
@@ -25,7 +31,7 @@ var step: f32 = 0.1;
 
 // rain data
 var rain = init: {
-    var initial_value: [640]Point = undefined;
+    var initial_value: [width]Point = undefined;
     for (initial_value) |*pt, i| {
         pt.* = Point{
             .x = @floatCast(f32, @as(f32, i)),
@@ -35,38 +41,53 @@ var rain = init: {
     break :init initial_value;
 };
 
-fn swap(x: *i32, y: *i32) void {
+var rain_index: usize = 0;
+var falling_rain: [width]Point = undefined;
+
+fn swap(x: *Point, y: *Point) void {
     const temp = x.*;
     x.* = y.*;
     y.* = temp;
 }
 
-export fn render() void {
-    var a: i32 = 10;
-    var b: i32 = 20;
-    
-    swap(&a, &b);
-
-    if (a > 10) {
-        hello();
+export fn initialize() void {
+    for (rain) |_, i| {
+        const rnd = @floatToInt(usize, getRandom() * width);
+        swap(&rain[i], &rain[rnd]);
     }
-    const width = @floatCast(f32, 640);
-    const rnd = getRandom() * width;
-    var x_rand = @floatToInt(usize, rnd);
+}
 
-    var drop = &rain[x_rand];
-    // setPixel(drop.x, drop.y + 10);
+fn update_rain() void {
+    var drop = &rain[rain_index];
+    if (drop.y > 480) {
+        rain_index += 1;
+    }
+    if (rain_index > width) {
+        rain_index = 0;
+    }
     drop.y += 10;
+}
 
-//    for (rain) |*pt, i| {
-//        setPixel(pt.x, pt.y);
-//    }
+fn update_circle() void {
+    if (t >= 10) return;
+    t += step;
+}
+    
+export fn update() void {
+    update_rain();
+    update_circle();
+    time += 16;
+}
+
+export fn render() void {
+    // draw rain
+    for (rain) |*pt| {
+        setPixel(pt.x, pt.y);
+    }
 
     // draw circle
     const x = origin.x + r * @sin(t);
     const y = origin.y + r * @cos(t);
-    // setPixel(x, y);
-    if (t >= 10) return;
-    t += step;
+    setPixel(x, y);
 }
 

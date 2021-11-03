@@ -11,7 +11,6 @@ c.height = world.height;
 
 let ctx = c.getContext("2d");
 
-// function drawPixel(x, y, colour) {
 function drawPixel(x, y) {
     ctx.fillStyle = 'black';
     ctx.rect(x, y, 2, 2);
@@ -33,11 +32,15 @@ var importObject = {
 
 WebAssembly.instantiateStreaming(fetch('demo.wasm'), importObject)
     .then(assembly => {
+        const update = assembly.instance.exports.update;
         const render = assembly.instance.exports.render;
+
+        assembly.instance.exports.initialize();
 
         function main() {
             clear();
             ctx.beginPath();
+            update();
             render();
             ctx.closePath();
         }
