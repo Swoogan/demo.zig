@@ -79,15 +79,9 @@ fn update_rain() void {
     rain_index += 1;
 }
 
-fn update_circle() void {
-    if (t >= 10) return;
-    t += step;
-}
-    
 export fn update() void {
     update_rain();
-    update_circle();
-    time += 16;
+    time += frame;
 }
 
 export fn render() void {
@@ -95,10 +89,5 @@ export fn render() void {
     for (rain) |*pt| {
         setPixel(pt.x, pt.y);
     }
-
-    // draw circle
-    const x = origin.x + r * @sin(t);
-    const y = origin.y + r * @cos(t);
-    setPixel(x, y);
 }
 
