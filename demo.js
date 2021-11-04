@@ -12,7 +12,7 @@ c.height = world.height;
 let ctx = c.getContext("2d");
 
 function drawPixel(x, y) {
-    ctx.fillStyle = 'black';
+    ctx.fillStyle = 'blue';
     ctx.rect(x, y, 2, 2);
     ctx.fill();
 }

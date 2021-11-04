@@ -17,8 +17,9 @@ const Point = packed struct {
 };
 
 //const height: usize = 320;
-const fps: u8 = 60;
-const five_seconds: u8 = 300;
+const fps: u32 = 60;
+const frame: u32 = 16;
+const drop_rate: u32 = frame * 2;
 const width: f32 = 640;
 const origin = Point { .x = 320, .y = 240 };
 
@@ -42,7 +43,7 @@ var rain = init: {
 };
 
 var rain_index: usize = 0;
-var falling_rain: [width]Point = undefined;
+var falling_rain: [width]*Point = undefined;
 
 fn swap(x: *Point, y: *Point) void {
     const temp = x.*;
@@ -58,14 +59,24 @@ export fn initialize() void {
 }
 
 fn update_rain() void {
-    var drop = &rain[rain_index];
-    if (drop.y > 480) {
-        rain_index += 1;
-    }
     if (rain_index > width) {
-        rain_index = 0;
+        return;
     }
-    drop.y += 10;
+
+    if (time % drop_rate == 0) {
+        const drop = &rain[rain_index];
+        falling_rain[rain_index] = drop;
+    }
+
+    for (falling_rain) |drop| {
+        drop.y += 10;
+
+        //if (drop.y > 480) {
+            //rain_index += 1;
+        //}
+    }
+
+    rain_index += 1;
 }
 
 fn update_circle() void {
